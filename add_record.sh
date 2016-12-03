@@ -38,27 +38,22 @@ select opt in "${TARGET_OPTIONS[@]}"; do
     esac
 done
 
-while :
-do
-    if [[ $REPLY == 1 ]]; then
-	    echo "Введите имя пользователя:"
-        else
-            echo "Введите имя группы:"
+PS3='Выберите пользователя или группу из списка (q - выход): '
+    select USER in $(getent passwd | cut -d: -f1); do
+        if [[ $REPLY == "q" ]]; then
+            exit 1
         fi
-
-    read NAME
-
-    grep "$NAME:" /etc/passwd >/dev/null
-    if [[ $? -ne 0 ]]; then
-        echo "Введите корректное имя"
-    else
-	break
-    fi
-done
+        if [[ -z $USER ]]; then
+            echo "Неверный выбор" >&2
+            continue
+        fi
+        echo "Вы выбрали '$USER'"
+        break
+    done
 
 while :
 do
-    echo "Введите права доступа:"
+    echo "Введите права доступа, которые требуется установить для данного пользователя или группы:"
     read PERMISSION
     if [[ $PERMISSION != "r" && $PERMISSION != "w" && $PERMISSION != "x" && $PERMISSION != "rw" && $PERMISSION != "rx" && $PERMISSION != "wx" && $PERMISSION != "rwx" ]]; then
 	echo "Введите корректные права"
@@ -68,5 +63,5 @@ do
 done
 	
 #Добавляем для пользователя или группы те или иные права доступа
-setfacl -m "$PARAM":"$NAME":"$PERMISSION" "$1"
+setfacl -m "$PARAM":"$USER":"$PERMISSION" "$1"
 getfacl "$1"
