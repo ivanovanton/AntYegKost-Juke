@@ -63,5 +63,5 @@ do
 done
 	
 #Добавляем для пользователя или группы те или иные права доступа
-setfacl -m "$PARAM":"$USER":"$PERMISSION" "$1"
+setfacl "$2" -m "$PARAM":"$USER":"$PERMISSION" "$1"
 getfacl "$1"
