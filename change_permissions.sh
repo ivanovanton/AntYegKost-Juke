@@ -1,7 +1,6 @@
 #!/bin/bash 
 
-DEBUG=0
-
+DEBUG=1
 PS3='Выберите, для кого изменить права доступа (q - выход): '
 # Перечень пунктов меню
 TARGET_OPTIONS=(
@@ -24,6 +23,7 @@ change_permissions() {
 		echo "filename=$1"
 		echo "opt=$opt" 
 		echo "REPLY=$REPLY"
+		echo "parameter=$2"
 	    fi
 	    case $REPLY in 
 			[1-${#TARGET_OPTIONS[*]}])
@@ -77,13 +77,12 @@ change_permissions() {
 		*) echo "Неверный пункт меню" >&2;;
 	    esac
 	done
-
-	chmod "$CHMOD_PARAM" "$1"
-	if [[ $DEBUG == 1 ]]; then       
-		ls -l "$1"
+	
+	if [[ -z $2 ]]; then
+		chmod "$CHMOD_PARAM" "$1"
+	else
+		chmod "$2" "$CHMOD_PARAM" "$1"
 	fi
 }
 
-if [[ $DEBUG == 1 ]]; then
-	change_permissions "$1"
-fi
+change_permissions "$1" "$2"
