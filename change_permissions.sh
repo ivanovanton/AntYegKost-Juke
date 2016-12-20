@@ -1,7 +1,7 @@
 #!/bin/bash 
 
 DEBUG=1
-PS3='Выберите, для кого изменить права доступа (q - выход): '
+PS3='Выберите, для кого изменить права доступа (q - выход, help - ): '
 # Перечень пунктов меню
 TARGET_OPTIONS=(
     "для владельца"
@@ -16,6 +16,8 @@ TARGETS=(
 	"o"
 	"a"
 )
+
+HELP="Сценарий изменения прав доступа"
 
 change_permissions() {
 	select opt in "${TARGET_OPTIONS[@]}"; do
@@ -33,12 +35,13 @@ change_permissions() {
 				fi
 		    break
 		    ;;
+		"help") echo "$HELP" ;;
 		q) return 0;;
 		*) echo "Неверный пункт меню" >&2;;
 	    esac
 	done
 
-	PS3='Выберите действие, которое нужно совершить? (q - выход): '
+	PS3='Выберите действие, которое нужно совершить? (q - выход, help - справка): '
 	ACTION_OPTIONS=(
 		"Добавить право записи"
 		"Убрать право записи"
@@ -74,6 +77,8 @@ change_permissions() {
 		    break
 		    ;;
 		q) return 0;;
+		"help") echo "$HELP"
+			 ;;
 		*) echo "Неверный пункт меню" >&2;;
 	    esac
 	done
