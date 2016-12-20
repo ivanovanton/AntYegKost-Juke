@@ -51,5 +51,5 @@ PS3='Выберите пользователя или группу из спис
         break
     done
 
-setfacl -x "$PARAM":"$USER" "$1"
+setfacl  "$2" -x "$PARAM":"$USER" "$1"
 getfacl "$1"
