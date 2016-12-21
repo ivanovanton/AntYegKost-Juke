@@ -70,19 +70,19 @@ first_case(){
 		select opt in "${OPTIONS1[@]}"
 		do
 			case $REPLY in
-				"1")    ./change_permissions.sh "$FILENAME" "$PARAM"
+				"1")    bash change_permissions.sh "$FILENAME" "$PARAM"
 					break
 					;;
-				"2")	./change_user_and_group.sh "$FILENAME" "$PARAM"
+				"2")	bash change_user_and_group.sh "$FILENAME" "$PARAM"
 					break
 					;;
-				"3")	./add_record.sh "$FILENAME" "$PARAM"
+				"3")	bash add_record.sh "$FILENAME" "$PARAM"
 					break
 					;;
-				"4") 	./delete_record.sh "$FILENAME" "$PARAM"
+				"4") 	bash delete_record.sh "$FILENAME" "$PARAM"
 					break
 					;;
-				"5")	./change_record.sh "$FILENAME" "$PARAM"
+				"5")	bash change_record.sh "$FILENAME" "$PARAM"
 					break
 					;;				
 				"q")
@@ -102,7 +102,8 @@ first_case(){
 }
 
 second_case(){
-	./ii.sh
+	bash ii.sh
+	return 0
 }
 
 select opt in "${OPTIONS[@]}"; do
