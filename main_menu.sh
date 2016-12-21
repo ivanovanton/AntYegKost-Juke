@@ -1,6 +1,17 @@
 #!/bin/bash
 
 DEBUG=1
+echo "Сценарий управления безопасностью файлов и каталогов. Авторы: Иванов Антон, Василенко Егор, Максимов Константин, Богомолов Илья, Степанов Виктор, Малышев Алексей"
+
+if [[ $1 = "--help" ]]; then
+	exit 0;
+fi
+
+if [[ "$(id -u)" != "0" ]]; then
+	echo "Для запуска приложения нужны root права">&2
+	exit 1
+fi
+
 PS3="Главное меню (q- выход, help - справка): "
 OPTIONS=(
 	"Работа с файлом/папкой" 
@@ -11,7 +22,6 @@ FUNCTIONS=(
 	second_case
 )
 
-HELP="Справка:..."
 
 first_case(){
 	if [ -z "$1" ]	
@@ -51,8 +61,8 @@ first_case(){
 	"Изменение прав доступа" 
 	"Изменение владельца и группы файла" 
 	"Добавить запись ACL"
-	"Изменить запись ACL"
-	"Удалить запись ACL"	
+	"Удалить запись ACL"
+	"Изменить запись ACL"	
 	)
 	EXIT_STATUS=0
 	while (( !EXIT_STATUS )); do
@@ -60,12 +70,10 @@ first_case(){
 		select opt in "${OPTIONS1[@]}"
 		do
 			case $REPLY in
-				"1")
-					./change_permissions.sh "$FILENAME" "$PARAM"
+				"1")    ./change_permissions.sh "$FILENAME" "$PARAM"
 					break
 					;;
-				"2")
-					./change_user_and_group.sh "$FILENAME" "$PARAM"
+				"2")	./change_user_and_group.sh "$FILENAME" "$PARAM"
 					break
 					;;
 				"3")	./add_record.sh "$FILENAME" "$PARAM"
@@ -82,7 +90,7 @@ first_case(){
 					break
 					;;
 				"help")
-					echo "$HELP"
+					echo "Выберите, какую операцию нужно совершить для выбранного файла/каталога"	
 					break
 					;;
 				*) echo "Неверно выбран пункт меню" >&2
@@ -94,29 +102,29 @@ first_case(){
 }
 
 second_case(){
-	./2.sh
+	./ii.sh
 }
 
 select opt in "${OPTIONS[@]}"; do
+	if [[ $DEBUG == 1 ]]; then
+	echo "filename=$1"
+	echo "opt=$opt" 
+	echo "REPLY=$REPLY"
+	fi
+	case $REPLY in 
+	    [1-${#OPTIONS[*]}])
+	    FUNC=${FUNCTIONS[$((REPLY-1))]}
 	    if [[ $DEBUG == 1 ]]; then
-		echo "filename=$1"
-		echo "opt=$opt" 
-		echo "REPLY=$REPLY"
+	    	echo "Запускаем $FUNC"
 	    fi
-	    case $REPLY in 
-		    [1-${#OPTIONS[*]}])
-		    FUNC=${FUNCTIONS[$((REPLY-1))]}
-		    if [[ $DEBUG == 1 ]]; then
-		    	echo "Запускаем $FUNC"
-		    fi
-                    $FUNC "$1"
-		    break
-		    ;;
-		q) exit 0;;
-		"help") echo "$HELP"
-			break
-			;;
-		*) echo "Неверный пункт меню" >&2;;
-	    esac
+	    $FUNC "$1"
+	    break
+	    ;;
+	q) exit 0;;
+	"help") echo "1) Работа с файлом/папкой
+2) Поиск файлов, доступных всем пользователям на запись"
+		;;
+	*) echo "Неверный пункт меню" >&2;;
+	esac
 	done
 		
