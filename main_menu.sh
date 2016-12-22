@@ -24,37 +24,42 @@ FUNCTIONS=(
 
 
 first_case(){
-	if [ -z "$1" ]	
-	then
-		echo "Введите имя файла или папки:"
-		read FILENAME
-	else
-		FILENAME=$1
-	fi
-	if [[ $DEBUG = 1 ]]
-	then
-		echo "Имя файла: $FILENAME"
-	fi
-	if [[ -a $FILENAME ]]
-	
-	then
-		if [[ -d $FILENAME ]]
-			then
-				echo "Введите y, если хотите применить операцию рекурсивно к выбранной папке"
-				read CHOICE 
-				if [[ $CHOICE = "y" ]]
-				then 
-					PARAM="-R"
-				fi
-				if [[ $DEBUG = 1 ]]; then
-					echo "choice=$CHOICE"
-					echo "param=$PARAM"
-				fi
+	while [[ ! -a $FILENAME ]]
+	do
+		if [[ -z "$1" ]]; then
+			echo "Введите имя файла или папки:"
+			read FILENAME
+		else
+			if [[ ! -z "$FILENAME" ]]; then
+				echo "Введите имя файла или папки:"
+				read FILENAME
+			else
+				FILENAME=$1
+			fi
 		fi
-	else
-		echo "Файл не существует" >&2
-		return 0;
-	fi
+		if [[ $DEBUG = 1 ]]
+		then
+			echo "Имя файла: $FILENAME"
+		fi
+		if [[ -a $FILENAME ]]
+		then
+			if [[ -d $FILENAME ]]
+				then
+					echo "Введите y, если хотите применить операцию рекурсивно к выбранной папке"
+					read CHOICE 
+					if [[ $CHOICE = "y" ]]
+					then 
+						PARAM="-R"
+					fi
+					if [[ $DEBUG = 1 ]]; then
+						echo "choice=$CHOICE"
+						echo "param=$PARAM"
+					fi
+			fi
+		else
+			echo "Файл не существует. Попробуйте ещё раз" >&2
+		fi
+	done
 
 	PS3="Выберите нужный пункт меню (q- выход, help - справка): "
 	OPTIONS1=(
@@ -102,8 +107,7 @@ first_case(){
 }
 
 second_case(){
-	bash ii.sh
-	return 0
+	./ii.sh
 }
 
 select opt in "${OPTIONS[@]}"; do
