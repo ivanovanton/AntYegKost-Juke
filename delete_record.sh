@@ -43,13 +43,18 @@ PS3='Выберите пользователя или группу из спис
         if [[ $REPLY == "q" ]]; then
             exit 1
         fi
-        if [[ -z $USER ]]; then
-            echo "Неверный выбор" >&2
+        if [[ $(getfacl "$1" | grep ":$USER:" | wc -l) == "0" ]]; then
+            echo "У данного пользователя нет acl прав" >&2
             continue
         fi
         echo "Вы выбрали '$USER'"
         break
     done
 
-setfacl  "$2" -x "$PARAM":"$USER" "$1"
+if [[ -z $2 ]]; then
+    setfacl -x "$PARAM":"$USER":"$PERMISSION" "$1"
+else
+    setfacl "$2" -x "$PARAM":"$USER":"$PERMISSION" "$1"
+fi	
+
 getfacl "$1"
