@@ -3,7 +3,6 @@
 # включить отладку
 DEBUG=0
 
-RECURSION=$2
 FILENAME=$1
 PS3='Введите номер пукнта меню (q - выход): '
 
@@ -29,7 +28,11 @@ change_user()
             continue
         fi
         echo "Вы выбрали пользователя '$user'."
-	chown $RECURSION $user $FILENAME
+	if [[ -z $RECURSION ]]; then
+		chown $user $FILENAME
+	else
+		chown $2 $user $FILENAME
+	fi
 	echo "Владельцом файла '$FILENAME'  является '$user'."
         break
     done
@@ -47,8 +50,12 @@ change_group()
     		echo "Неверный выбор" >&2
     		continue
         fi
-        echo "Вы выбрали пользователя '$user'."
-	chown $RECURSION :$group $FILENAME
+        echo "Вы выбрали пользователя '$user'."	
+	if [[ -z $2 ]]; then
+		chown :$group $FILENAME
+	else
+		chown $2 :$group $FILENAME
+	fi
 	echo "Группой файла '$FILENAME'  является '$group'."
         break
     done
